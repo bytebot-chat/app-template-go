@@ -5,12 +5,19 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/bytebot-chat/gateway-irc/model"
 	"github.com/go-redis/redis/v8"
 	"github.com/satori/go.uuid"
 )
+
+// This is the app's named, as seen in the message it sends to gateways.
+var app_name = "app-template"
+
+// This is the env template used in configuration variables.
+var app_env_prefix = "TEMPLATE_"
 
 // Flags and their default values.
 var addr = flag.String("redis", "localhost:6379", "Redis server address")
@@ -19,6 +26,8 @@ var outbound = flag.String("outbound", "irc", "Pubsub queue for sending messages
 
 func main() {
 	flag.Parse()
+	parseEnv()
+
 	ctx := context.Background()
 
 	// We connect to the redis server
@@ -51,13 +60,17 @@ func main() {
 		// Below is the app logic, this template is just a parrot
 		// that repeats every message
 		m2 := model.Message{
-			To:      m.From,
+			To:      m.To,
+			From:    app_name,
 			Content: m.Content,
 			Metadata: model.Metadata{
 				Source: m.Metadata.Dest,
 				Dest:   m.Metadata.Source,
 				ID:     uuid.Must(uuid.NewV4(), *new(error)),
 			},
+		}
+		if !strings.HasPrefix(m.To, "#") { // DMs go back to source, channel goes back to channel
+			m2.To = m.From
 		}
 
 		stringMsg, _ := json.Marshal(m2)
