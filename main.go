@@ -49,11 +49,12 @@ func main() {
 
 	err := rdb.Ping(ctx).Err()
 	if err != nil {
-		time.Sleep(3 * time.Second)
 		logger.Warn().Msg("Ping timeout, trying again...")
+		time.Sleep(3 * time.Second)
 		err := rdb.Ping(ctx).Err()
 		if err != nil {
-			panic(err)
+			logger.Fatal().Err(err).
+				Msg("Couldn't connect to redis server")
 		}
 	}
 
