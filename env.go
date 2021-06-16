@@ -16,13 +16,13 @@ func parseEnv() {
 	if !isFlagSet("inbound") {
 		*inbound = parseStringFromEnv(
 			fmt.Sprintf("%s_INBOUND", app_env_prefix),
-			"irc")
+			"irc-inbound")
 	}
 
 	if !isFlagSet("outbound") {
 		*outbound = parseStringFromEnv(
 			fmt.Sprintf("%s_OUTBOUND", app_env_prefix),
-			app_name)
+			"irc")
 	}
 }
 

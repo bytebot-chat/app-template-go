@@ -1,9 +1,7 @@
-## App-template-go
-
+# App-template-go
 This is a template app for a bytebot app written in go, fork it to create your own.
 
-
-- Splitting in files
+## TODO
 - logging
 - dockerfile
 - github actions?
